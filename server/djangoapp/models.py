@@ -4,6 +4,46 @@
 # from django.utils.timezone import now
 # from django.core.validators import MaxValueValidator, MinValueValidator
 
+from django.db import models
+from django.utils.timezone import now
+from django.core.validators import MaxValueValidator, MinValueValidator
+
+# Car Make Model
+class CarMake(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+
+    # İsteğe bağlı ek alanlar eklenebilir
+    # örneğin: origin_country = models.CharField(max_length=50, null=True)
+
+    def __str__(self):
+        return self.name
+
+
+# Car Model
+class CarModel(models.Model):
+    car_make = models.ForeignKey(CarMake, on_delete=models.CASCADE)  # Many-to-One ilişki
+    dealer_id = models.IntegerField()
+    name = models.CharField(max_length=100)
+
+    CAR_TYPES = [
+        ('SEDAN', 'Sedan'),
+        ('SUV', 'SUV'),
+        ('WAGON', 'Wagon'),
+        # Gerekirse daha fazla tür eklenebilir
+    ]
+
+    type = models.CharField(max_length=10, choices=CAR_TYPES, default='SUV')
+    year = models.IntegerField(
+        default=2023,
+        validators=[
+            MinValueValidator(2015),
+            MaxValueValidator(2023)
+        ]
+    )
+
+    def __str__(self):
+        return f"{self.car_make.name} {self.name}"
 
 # Create your models here.
 
